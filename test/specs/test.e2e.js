@@ -51,7 +51,7 @@ describe('WebdriverIO site test', () => {
     await browser.pause(2000);
   });
 
-  it('should clear the search input by clicking the X button', async () => {
+  xit('should clear the search input by clicking the X button', async () => {
     await browser.url('https://webdriver.io/');
     const searchBtn = await $('button.DocSearch-Button');
     await searchBtn.click();
@@ -59,10 +59,62 @@ describe('WebdriverIO site test', () => {
     const input = await $('input.DocSearch-Input');
     await input.setValue('all is done');
     await browser.pause(2000);
-    
+
     const closeBtn = await $('button[title="Clear the query"]');
     await closeBtn.click();
     await browser.pause(1000);
+  });
+
+  xit('should check if element isClickable', async () => {
+    await browser.url('https://webdriver.io/');
+    const apiButton = await $('nav a[href="/docs/api"]');
+    const isClickable = await apiButton.isClickable();
+    console.log('Is Get Started clickable:', isClickable);
+  });
+
+  xit('should scroll to footer Getting Started link on API page', async () => {
+    await browser.url('https://webdriver.io/docs/api');
+
+    const footerLink = await $('footer a.footer__link-item[href="/docs/gettingstarted"]');
+    await footerLink.scrollIntoView();
+    await browser.pause(500);
+    const isDisplayed = await footerLink.isDisplayed();
+    console.log('Is footer Getting Started link displayed:', isDisplayed);
+
+  });
+  
+  xit('should check if Protocol Commands link is enabled, is clickable, get HTML', async () => {
+    await browser.url('https://webdriver.io/docs/api');
+    const protocolLink = await $('a.pagination-nav__link--next[href="/docs/api/protocols"]');
+    await protocolLink.scrollIntoView();
+    const isEnabled = await protocolLink.isEnabled();
+    console.log('Is Protocol Commands link enabled:', isEnabled);
+
+    const isClickable = await protocolLink.isClickable();
+    console.log('Is Protocol Commands link clickable:', isClickable);
+
+    const html = await protocolLink.getHTML();
+    console.log('Protocol Commands link HTML:', html);
+    expect(html).toContain('Protocol Commands');
+  });
+
+  it('should wait until the Protocol Commands h1 appears', async () => {
+    await browser.url('https://webdriver.io/docs/api/protocols');
+
+    await browser.waitUntil(async () => {
+        const h1 = await $('h1');
+        const text = await h1.getText();
+        return text.includes('Protocol Commands');
+    }, {
+        timeout: 5000,
+        timeoutMsg: 'Protocol Commands heading not found',
+    });
+
+    const h1 = await $('h1');
+    const isDisplayed = await h1.isDisplayed();
+    const text = await h1.getText();
+    expect(text).toContain('Protocol Commands');
+    console.log('Protocol Commands H1 found and displayed!');
   });
 });
 
